@@ -27,6 +27,13 @@ jobs:
 
       - name: Configure Pages
         uses: actions/configure-pages@v5
+        with:
+          # Attempt to enable Pages on first deploy. Note: GitHub's
+          # GITHUB_TOKEN cannot enable Pages; a PAT/App with
+          # administration:write (+ pages:write) is required for this
+          # input to succeed. Otherwise enable once via
+          # Settings → Pages → Source: GitHub Actions.
+          enablement: true
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
