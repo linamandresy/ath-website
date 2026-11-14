@@ -23,9 +23,10 @@ Les chemins sont relatifs : le site fonctionne aussi bien en racine de dépôt q
 
 ## Déploiement GitHub Pages
 
-1. Le workflow [`.github/workflows/pages.yml`](.github/workflows/pages.yml) publie le contenu du dépôt à chaque push sur `master` (Actions → GitHub Pages).
-2. Dans **Settings → Pages**, choisir la source **GitHub Actions** (une seule fois).
-3. `.nojekyll` évite que Jekyll n’ignore ou ne transforme des assets.
+1. Dans **Settings → Pages**, choisir la source **GitHub Actions** (une seule fois ; requis avant le premier déploiement).
+2. Si le dépôt est **privé**, un site Pages public (`*.github.io`) nécessite en général un plan GitHub qui l’autorise, ou de rendre le dépôt **public**.
+3. Le workflow [`.github/workflows/pages.yml`](.github/workflows/pages.yml) publie la racine du dépôt à chaque push sur `master`.
+4. `.nojekyll` évite que Jekyll n’ignore ou ne transforme des assets.
 
 Alternative manuelle : Settings → Pages → Deploy from branch → `master` / `/ (root)`.
 
