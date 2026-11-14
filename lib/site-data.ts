@@ -3,8 +3,15 @@
 export const BASE_PATH = "/ath-website";
 export const SITE_URL = "https://linamandresy.github.io/ath-website";
 
-/** Public asset path that respects GitHub Pages basePath. */
+/**
+ * Public asset path that respects GitHub Pages basePath.
+ * Absolute http(s) URLs are left unchanged. Root-relative and relative
+ * public paths are prefixed with `/ath-website`.
+ */
 export function asset(path: string): string {
+  if (!path) return path;
+  if (/^https?:\/\//i.test(path) || path.startsWith("data:")) return path;
+  if (path.startsWith(BASE_PATH + "/") || path === BASE_PATH) return path;
   const clean = path.startsWith("/") ? path : `/${path}`;
   return `${BASE_PATH}${clean}`;
 }
@@ -17,6 +24,8 @@ export const SITE_CONFIG = {
     services: ["", "", "", ""] as string[],
   },
   contact: {
+    // Replace with a real international WhatsApp number (digits only, country code included), e.g. "2613XXXXXXXX".
+    // Placeholder / empty values keep the form from opening WhatsApp until configured.
     whatsapp: "261XXXXXXXXX",
     phone: "",
     email: "",

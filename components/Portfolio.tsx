@@ -2,12 +2,19 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { CATS, projects, type Project } from "@/lib/site-data";
+import { lockScroll, unlockScroll } from "@/lib/scroll-lock";
 import MediaPlaceholder from "./MediaPlaceholder";
 import Reveal from "./Reveal";
 
 function projectImages(p: Project): string[] {
-  const a = p.images?.length ? p.images : [p.cover];
-  return a.length ? a : [""];
+  const filled = (p.images || []).filter((s) => !!s?.trim());
+  if (filled.length) return filled;
+  if (p.cover?.trim()) return [p.cover];
+  return [""];
+}
+
+function coverSrc(p: Project): string | undefined {
+  return p.cover?.trim() || p.images?.find((s) => !!s?.trim()) || undefined;
 }
 
 export default function Portfolio() {
@@ -17,6 +24,7 @@ export default function Portfolio() {
   const [imageIndex, setImageIndex] = useState(0);
   const lastFocus = useRef<HTMLElement | null>(null);
   const closeBtn = useRef<HTMLButtonElement>(null);
+  const modalRef = useRef<HTMLDivElement>(null);
 
   const list = useMemo(
     () =>
@@ -26,12 +34,15 @@ export default function Portfolio() {
     [category],
   );
 
-  const current = list[projectIndex];
+  const safeIndex = list.length
+    ? ((projectIndex % list.length) + list.length) % list.length
+    : 0;
+  const current = list[safeIndex];
   const imgs = current ? projectImages(current) : [""];
 
   const closeModal = useCallback(() => {
     setOpen(false);
-    document.body.style.overflow = "";
+    unlockScroll();
     lastFocus.current?.focus();
   }, []);
 
@@ -41,8 +52,15 @@ export default function Portfolio() {
     setImageIndex(0);
     if (from) lastFocus.current = from;
     setOpen(true);
-    document.body.style.overflow = "hidden";
+    lockScroll();
     requestAnimationFrame(() => closeBtn.current?.focus());
+  };
+
+  const selectCategory = (c: string) => {
+    setCategory(c);
+    setProjectIndex(0);
+    setImageIndex(0);
+    if (open) closeModal();
   };
 
   const shiftImage = useCallback(
@@ -59,10 +77,33 @@ export default function Portfolio() {
       if (e.key === "Escape") closeModal();
       if (e.key === "ArrowLeft") shiftImage(-1);
       if (e.key === "ArrowRight") shiftImage(1);
+      if (e.key === "Tab" && modalRef.current) {
+        const focusable = [
+          ...modalRef.current.querySelectorAll<HTMLElement>(
+            'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
+          ),
+        ].filter((el) => el.offsetParent !== null);
+        if (!focusable.length) return;
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [open, closeModal, shiftImage]);
+
+  useEffect(() => {
+    return () => {
+      if (open) unlockScroll();
+    };
+  }, [open]);
 
   const metaRows = current
     ? (
@@ -102,7 +143,7 @@ export default function Portfolio() {
                 key={c}
                 type="button"
                 aria-pressed={category === c}
-                onClick={() => setCategory(c)}
+                onClick={() => selectCategory(c)}
               >
                 {c}
               </button>
@@ -121,7 +162,7 @@ export default function Portfolio() {
                 >
                   <div className="media">
                     <MediaPlaceholder
-                      src={p.cover || p.images?.[0] || undefined}
+                      src={coverSrc(p)}
                       alt={p.title}
                       label="Démonstration — photo à remplacer"
                     />
@@ -148,6 +189,7 @@ export default function Portfolio() {
       </section>
 
       <div
+        ref={modalRef}
         className={`modal${open ? " open" : ""}`}
         role="dialog"
         aria-modal="true"
@@ -244,7 +286,7 @@ export default function Portfolio() {
                     type="button"
                     onClick={() => {
                       setProjectIndex(
-                        (projectIndex - 1 + list.length) % list.length,
+                        (safeIndex - 1 + list.length) % list.length,
                       );
                       setImageIndex(0);
                     }}
@@ -254,7 +296,7 @@ export default function Portfolio() {
                   <button
                     type="button"
                     onClick={() => {
-                      setProjectIndex((projectIndex + 1) % list.length);
+                      setProjectIndex((safeIndex + 1) % list.length);
                       setImageIndex(0);
                     }}
                   >

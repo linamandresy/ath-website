@@ -126,11 +126,28 @@ export default function Contact() {
       return;
     }
 
-    window.open(
-      `https://wa.me/${wa}?text=${encodeURIComponent(lines.join("\n"))}`,
+    const text = lines.join("\n");
+    const encoded = encodeURIComponent(text);
+    // Keep WhatsApp deep-link under typical browser URL limits.
+    if (encoded.length > 1500) {
+      setStatus(
+        "Votre message est trop long pour WhatsApp. Raccourcissez-le puis réessayez.",
+      );
+      return;
+    }
+
+    const popup = window.open(
+      `https://wa.me/${wa}?text=${encoded}`,
       "_blank",
       "noopener",
     );
+    if (!popup) {
+      setStatus(
+        "Impossible d'ouvrir WhatsApp (fenêtre bloquée). Autorisez les pop-ups pour ce site, puis renvoyez le formulaire — vos saisies sont conservées.",
+      );
+      return;
+    }
+
     setStatus(
       "Merci ! WhatsApp s'ouvre avec votre demande : appuyez sur « Envoyer » pour la transmettre à notre équipe.",
     );
