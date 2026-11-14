@@ -27,7 +27,7 @@ export const SITE_CONFIG = {
     whatsapp: "+1(416)732-9879",
     phone: "+1(416)732-9879",
     email: "mandresy.rabenandrasana@outlook.com",
-    address: "",
+    address: "24 Mansur Terrace, Toronto, ON M3J 3R1",
     facebook: "https://www.facebook.com/Baguyo",
   },
 };
