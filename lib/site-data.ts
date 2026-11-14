@@ -24,13 +24,11 @@ export const SITE_CONFIG = {
     services: ["", "", "", ""] as string[],
   },
   contact: {
-    // Replace with a real international WhatsApp number (digits only, country code included), e.g. "2613XXXXXXXX".
-    // Placeholder / empty values keep the form from opening WhatsApp until configured.
-    whatsapp: "261XXXXXXXXX",
-    phone: "",
-    email: "",
+    whatsapp: "+1(416)732-9879",
+    phone: "+1(416)732-9879",
+    email: "mandresy.rabenandrasana@outlook.com",
     address: "",
-    facebook: "",
+    facebook: "https://www.facebook.com/Baguyo",
   },
 };
 
