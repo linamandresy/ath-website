@@ -1,21 +1,6 @@
 import type { Metadata, Viewport } from "next";
-import { Fraunces, Manrope } from "next/font/google";
 import { SITE_URL, jsonLd } from "@/lib/site-data";
 import "./globals.css";
-
-const fraunces = Fraunces({
-  subsets: ["latin"],
-  variable: "--font-fraunces",
-  display: "swap",
-  axes: ["opsz"],
-});
-
-const manrope = Manrope({
-  subsets: ["latin"],
-  variable: "--font-manrope",
-  display: "swap",
-  weight: ["400", "500", "600", "700"],
-});
 
 export const metadata: Metadata = {
   metadataBase: new URL(`${SITE_URL}/`),
@@ -25,7 +10,7 @@ export const metadata: Metadata = {
   authors: [{ name: "ATH Construction" }],
   robots: { index: true, follow: true },
   alternates: {
-    canonical: "/",
+    canonical: SITE_URL + "/",
   },
   openGraph: {
     title: "ATH Construction | Construction & Ingénierie",
@@ -33,11 +18,11 @@ export const metadata: Metadata = {
       "Entreprise familiale de construction de maisons à Madagascar.",
     type: "website",
     locale: "fr_MG",
-    url: "/",
+    url: SITE_URL + "/",
     siteName: "ATH Construction",
     images: [
       {
-        url: "assets/logo.jpg",
+        url: `${SITE_URL}/assets/logo.jpg`,
         alt: "Logo ATH Construction",
       },
     ],
@@ -47,7 +32,7 @@ export const metadata: Metadata = {
     title: "ATH Construction | Construction & Ingénierie",
     description:
       "Entreprise familiale de construction de maisons à Madagascar.",
-    images: ["assets/logo.jpg"],
+    images: [`${SITE_URL}/assets/logo.jpg`],
   },
   icons: {
     icon: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23080808'/%3E%3Cpath d='M6 24 16 7l10 17z' fill='none' stroke='%2343C65A' stroke-width='2'/%3E%3C/svg%3E",
@@ -66,8 +51,20 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="fr" className={`${fraunces.variable} ${manrope.variable}`}>
+    <html lang="fr">
       <head>
+        {/* Runtime Google Fonts (same as prior static site) — avoids build-time fetch failures. */}
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link
+          rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossOrigin="anonymous"
+        />
+        {/* eslint-disable-next-line @next/next/no-page-custom-font -- runtime fonts avoid build-time Google Fonts dependency for Pages CI */}
+        <link
+          href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Manrope:wght@400;500;600;700&display=swap"
+          rel="stylesheet"
+        />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
