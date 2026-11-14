@@ -2,6 +2,9 @@
 
 import { useEffect, useState } from "react";
 import { NAV_LINKS, asset } from "@/lib/site-data";
+import { lockScroll, unlockScroll } from "@/lib/scroll-lock";
+
+const NAV_IDS = new Set(NAV_LINKS.map((l) => l.href.slice(1)));
 
 export default function Header() {
   const [scrolled, setScrolled] = useState(false);
@@ -14,7 +17,9 @@ export default function Header() {
       const sections = document.querySelectorAll<HTMLElement>("main section[id]");
       let id = "accueil";
       sections.forEach((s) => {
-        if (window.scrollY + 200 >= s.offsetTop) id = s.id;
+        if (window.scrollY + 200 >= s.offsetTop && NAV_IDS.has(s.id)) {
+          id = s.id;
+        }
       });
       setActive(id);
     };
@@ -24,9 +29,10 @@ export default function Header() {
   }, []);
 
   useEffect(() => {
-    document.body.style.overflow = menuOpen ? "hidden" : "";
+    if (menuOpen) lockScroll();
+    else unlockScroll();
     return () => {
-      document.body.style.overflow = "";
+      if (menuOpen) unlockScroll();
     };
   }, [menuOpen]);
 

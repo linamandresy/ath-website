@@ -1,3 +1,5 @@
+import { asset } from "@/lib/site-data";
+
 type Props = {
   src?: string;
   alt: string;
@@ -42,7 +44,7 @@ export default function MediaPlaceholder({
   if (src) {
     return (
       // eslint-disable-next-line @next/next/no-img-element
-      <img src={src} alt={alt} loading={eager ? "eager" : "lazy"} />
+      <img src={asset(src)} alt={alt} loading={eager ? "eager" : "lazy"} />
     );
   }
 
