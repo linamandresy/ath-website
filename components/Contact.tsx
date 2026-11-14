@@ -8,6 +8,13 @@ import {
 } from "@/lib/site-data";
 import Reveal from "./Reveal";
 
+const WEB3FORMS_URL = "https://api.web3forms.com/submit";
+const WEB3FORMS_ACCESS_KEY = "74c7eead-d460-46eb-8049-2f1c98b6cc0e";
+const SUCCESS_MESSAGE =
+  "Votre demande a bien été envoyée. Nous vous contacterons prochainement.";
+const ERROR_MESSAGE =
+  "Une erreur s'est produite lors de l'envoi. Veuillez réessayer dans quelques instants.";
+
 type FieldKey =
   | "nom"
   | "email"
@@ -32,7 +39,9 @@ export default function Contact() {
   const wa = digitsWhatsApp(C.whatsapp);
   const [values, setValues] = useState(INITIAL);
   const [errors, setErrors] = useState<Partial<Record<FieldKey, string>>>({});
-  const [status, setStatus] = useState<string | null>(null);
+  const [status, setStatus] = useState<"success" | "error" | null>(null);
+  const [statusMessage, setStatusMessage] = useState<string | null>(null);
+  const [submitting, setSubmitting] = useState(false);
 
   const contactRows: [string, React.ReactNode][] = [
     [
@@ -89,9 +98,13 @@ export default function Contact() {
     setErrors((e) => ({ ...e, [key]: msg || undefined }));
   }
 
-  function onSubmit(e: FormEvent) {
+  async function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    if (submitting) return;
+
     setStatus(null);
+    setStatusMessage(null);
+
     const keys: FieldKey[] = ["nom", "email", "tel", "type", "loc", "bud", "msg"];
     const next: Partial<Record<FieldKey, string>> = {};
     let ok = true;
@@ -105,54 +118,50 @@ export default function Contact() {
     setErrors(next);
     if (!ok) return;
 
-    const lines = ["*Nouvelle demande — ATH Construction*", ""];
-    const named: [string, string][] = [
-      ["Nom", values.nom],
-      ["E-mail", values.email],
-      ["Téléphone", values.tel],
-      ["Type de projet", values.type],
-      ["Localisation", values.loc],
-      ["Budget estimatif", values.bud],
-      ["Message", values.msg],
-    ];
-    named.forEach(([n, v]) => {
-      if (v.trim()) lines.push(`*${n} :* ${v.trim()}`);
-    });
-
-    if (!isWhatsAppConfigured(C.whatsapp)) {
-      setStatus(
-        "Le numéro WhatsApp n'est pas encore configuré (SITE_CONFIG.contact.whatsapp dans lib/site-data.ts).",
-      );
+    const form = e.currentTarget;
+    const honeypot = form.elements.namedItem("botcheck");
+    if (honeypot instanceof HTMLInputElement && honeypot.checked) {
+      setStatus("success");
+      setStatusMessage(SUCCESS_MESSAGE);
+      setValues(INITIAL);
+      setErrors({});
       return;
     }
 
-    const text = lines.join("\n");
-    const encoded = encodeURIComponent(text);
-    // Keep WhatsApp deep-link under typical browser URL limits.
-    if (encoded.length > 1500) {
-      setStatus(
-        "Votre message est trop long pour WhatsApp. Raccourcissez-le puis réessayez.",
-      );
-      return;
-    }
+    const data = new FormData(form);
+    data.set("access_key", WEB3FORMS_ACCESS_KEY);
+    data.set("subject", "Nouvelle demande — ATH Construction");
+    data.set("from_name", "ATH Construction");
+    // Web3Forms honeypot: must stay empty for humans
+    data.set("botcheck", "");
 
-    const popup = window.open(
-      `https://wa.me/${wa}?text=${encoded}`,
-      "_blank",
-      "noopener",
-    );
-    if (!popup) {
-      setStatus(
-        "Impossible d'ouvrir WhatsApp (fenêtre bloquée). Autorisez les pop-ups pour ce site, puis renvoyez le formulaire — vos saisies sont conservées.",
-      );
-      return;
-    }
+    setSubmitting(true);
+    try {
+      const res = await fetch(WEB3FORMS_URL, {
+        method: "POST",
+        body: data,
+      });
+      const json = (await res.json().catch(() => null)) as {
+        success?: boolean;
+        message?: string;
+      } | null;
 
-    setStatus(
-      "Merci ! WhatsApp s'ouvre avec votre demande : appuyez sur « Envoyer » pour la transmettre à notre équipe.",
-    );
-    setValues(INITIAL);
-    setErrors({});
+      if (!res.ok || !json?.success) {
+        setStatus("error");
+        setStatusMessage(ERROR_MESSAGE);
+        return;
+      }
+
+      setStatus("success");
+      setStatusMessage(SUCCESS_MESSAGE);
+      setValues(INITIAL);
+      setErrors({});
+    } catch {
+      setStatus("error");
+      setStatusMessage(ERROR_MESSAGE);
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   const set =
@@ -184,7 +193,25 @@ export default function Contact() {
           </ul>
         </Reveal>
         <Reveal>
-          <form onSubmit={onSubmit} noValidate>
+          <form
+            onSubmit={onSubmit}
+            noValidate
+            aria-busy={submitting}
+          >
+            <input
+              type="hidden"
+              name="access_key"
+              value={WEB3FORMS_ACCESS_KEY}
+            />
+            {/* Web3Forms honeypot — hidden from users; bots that fill it are rejected */}
+            <input
+              type="checkbox"
+              name="botcheck"
+              className="hp"
+              tabIndex={-1}
+              autoComplete="off"
+              aria-hidden="true"
+            />
             <div className={`f full${errors.nom ? " bad" : ""}`}>
               <label htmlFor="nom">Nom complet *</label>
               <input
@@ -196,6 +223,7 @@ export default function Contact() {
                 onChange={set("nom")}
                 onBlur={() => onBlur("nom")}
                 aria-invalid={!!errors.nom}
+                disabled={submitting}
               />
               <div className="err">{errors.nom}</div>
             </div>
@@ -211,6 +239,7 @@ export default function Contact() {
                 onChange={set("email")}
                 onBlur={() => onBlur("email")}
                 aria-invalid={!!errors.email}
+                disabled={submitting}
               />
               <div className="err">{errors.email}</div>
             </div>
@@ -226,6 +255,7 @@ export default function Contact() {
                 onChange={set("tel")}
                 onBlur={() => onBlur("tel")}
                 aria-invalid={!!errors.tel}
+                disabled={submitting}
               />
               <div className="err">{errors.tel}</div>
             </div>
@@ -239,6 +269,7 @@ export default function Contact() {
                 onChange={set("type")}
                 onBlur={() => onBlur("type")}
                 aria-invalid={!!errors.type}
+                disabled={submitting}
               >
                 <option value="">Sélectionner…</option>
                 <option>Construction de maison</option>
@@ -259,6 +290,7 @@ export default function Contact() {
                 onChange={set("loc")}
                 onBlur={() => onBlur("loc")}
                 aria-invalid={!!errors.loc}
+                disabled={submitting}
               />
               <div className="err">{errors.loc}</div>
             </div>
@@ -269,6 +301,7 @@ export default function Contact() {
                 name="Budget estimatif"
                 value={values.bud}
                 onChange={set("bud")}
+                disabled={submitting}
               />
             </div>
             <div className={`f full${errors.msg ? " bad" : ""}`}>
@@ -282,17 +315,28 @@ export default function Contact() {
                 onChange={set("msg")}
                 onBlur={() => onBlur("msg")}
                 aria-invalid={!!errors.msg}
+                disabled={submitting}
               />
               <div className="err">{errors.msg}</div>
             </div>
             <div className="f full">
-              <button className="btn" type="submit">
-                Envoyer ma demande
+              <button
+                className="btn"
+                type="submit"
+                disabled={submitting}
+                aria-busy={submitting}
+              >
+                {submitting ? "Envoi en cours…" : "Envoyer ma demande"}
               </button>
             </div>
-            {status && (
-              <div id="ok" role="status" style={{ display: "block" }}>
-                {status}
+            {statusMessage && (
+              <div
+                id="ok"
+                className={status === "error" ? "fail" : undefined}
+                role={status === "error" ? "alert" : "status"}
+                style={{ display: "block" }}
+              >
+                {statusMessage}
               </div>
             )}
           </form>
