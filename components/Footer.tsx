@@ -44,9 +44,9 @@ export default function Footer() {
         <div className="fg">
           <div>
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img alt="Logo ATH Construction" src={asset("assets/logo.jpg")} />
+            <img alt="Logo ATH Constructions" src={asset("assets/logo.jpg")} />
             <p>
-              ATH Construction, votre partenaire pour des projets de
+              ATH Constructions, votre partenaire pour des projets de
               construction résidentielle à Madagascar.
             </p>
           </div>
@@ -81,7 +81,7 @@ export default function Footer() {
             </ul>
           </div>
         </div>
-        <div className="cr">© 2026 ATH Construction. Tous droits réservés.</div>
+        <div className="cr">© 2026 ATH Constructions. Tous droits réservés.</div>
       </div>
     </footer>
   );

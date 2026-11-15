@@ -4,32 +4,32 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   metadataBase: new URL(`${SITE_URL}/`),
-  title: "ATH Construction Madagascar | Construction de Maisons & Ingénierie",
+  title: "ATH Constructions Madagascar | Construction de Maisons & Ingénierie",
   description:
-    "Découvrez ATH Construction, entreprise familiale spécialisée dans la construction de maisons à Madagascar. Explorez nos réalisations et contactez-nous pour votre projet.",
-  authors: [{ name: "ATH Construction" }],
+    "Découvrez ATH Constructions, entreprise familiale spécialisée dans la construction de maisons à Madagascar. Explorez nos réalisations et contactez-nous pour votre projet.",
+  authors: [{ name: "ATH Constructions" }],
   robots: { index: true, follow: true },
   alternates: {
     canonical: SITE_URL + "/",
   },
   openGraph: {
-    title: "ATH Construction | Construction & Ingénierie",
+    title: "ATH Constructions | Construction & Ingénierie",
     description:
       "Entreprise familiale de construction de maisons à Madagascar.",
     type: "website",
     locale: "fr_MG",
     url: SITE_URL + "/",
-    siteName: "ATH Construction",
+    siteName: "ATH Constructions",
     images: [
       {
         url: `${SITE_URL}/assets/logo.jpg`,
-        alt: "Logo ATH Construction",
+        alt: "Logo ATH Constructions",
       },
     ],
   },
   twitter: {
     card: "summary",
-    title: "ATH Construction | Construction & Ingénierie",
+    title: "ATH Constructions | Construction & Ingénierie",
     description:
       "Entreprise familiale de construction de maisons à Madagascar.",
     images: [`${SITE_URL}/assets/logo.jpg`],

@@ -170,8 +170,8 @@ export default function Contact() {
 
     const data = new FormData(form);
     data.set("access_key", WEB3FORMS_ACCESS_KEY);
-    data.set("subject", "Nouvelle demande — ATH Construction");
-    data.set("from_name", "ATH Construction");
+    data.set("subject", "Nouvelle demande — ATH Constructions");
+    data.set("from_name", "ATH Constructions");
     // Web3Forms Reply-To / recognized sender email (not the French label name)
     data.set("email", values.email.trim());
     data.set("name", values.nom.trim());

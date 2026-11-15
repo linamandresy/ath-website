@@ -53,10 +53,10 @@ export default function Header() {
           <a
             className="brand"
             href="#accueil"
-            aria-label="ATH Construction — Accueil"
+            aria-label="ATH Constructions — Accueil"
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={asset("assets/logo.jpg")} alt="Logo ATH Construction" />
+            <img src={asset("assets/logo.jpg")} alt="Logo ATH Constructions" />
             <small>CONSTRUCTION &amp; INGÉNIERIE</small>
           </a>
           <nav aria-label="Navigation principale">
