@@ -132,7 +132,7 @@ export default function Portfolio() {
               Des projets concrets, des espaces de vie conçus pour durer.
             </p>
             <p className="intro">
-              Découvrez quelques-uns des projets réalisés par ATH Construction
+              Découvrez quelques-uns des projets réalisés par ATH Constructions
               et explorez notre savoir-faire à travers des constructions pensées
               pour répondre aux besoins de chaque client.
             </p>

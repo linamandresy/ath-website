@@ -1,6 +1,6 @@
-# ATH Construction — Site vitrine (Next.js)
+# ATH Constructions — Site vitrine (Next.js)
 
-Site vitrine **ATH Construction** (construction & ingénierie à Madagascar), édité comme un projet **Next.js** (App Router + TypeScript) et **déployé en export statique** sur GitHub Pages.
+Site vitrine **ATH Constructions** (construction & ingénierie à Madagascar), édité comme un projet **Next.js** (App Router + TypeScript) et **déployé en export statique** sur GitHub Pages.
 
 ## URL attendue
 

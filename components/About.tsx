@@ -19,7 +19,7 @@ export default function About() {
           <div className="lbl">QUI SOMMES-NOUS ?</div>
           <h2>Une entreprise familiale. Une vision professionnelle.</h2>
           <p>
-            ATH Construction est une entreprise familiale spécialisée dans la
+            ATH Constructions est une entreprise familiale spécialisée dans la
             construction de maisons à Madagascar.
           </p>
           <p>

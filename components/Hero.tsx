@@ -29,12 +29,12 @@ export default function Hero() {
         />
       </svg>
       <div className="wrap">
-        <div className="in lbl">ATH CONSTRUCTION | MADAGASCAR</div>
+        <div className="in lbl">ATH CONSTRUCTIONS | MADAGASCAR</div>
         <h1 className="in">
           Donner forme à vos projets. Construire votre avenir.
         </h1>
         <p className="in">
-          De la conception à la réalisation, ATH Construction met son expertise
+          De la conception à la réalisation, ATH Constructions met son expertise
           en ingénierie et son savoir-faire au service de vos projets de
           construction résidentielle.
         </p>

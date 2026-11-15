@@ -203,8 +203,8 @@ export function isWhatsAppConfigured(raw: string): boolean {
 export const jsonLd = {
   "@context": "https://schema.org",
   "@type": ["Organization", "LocalBusiness"],
-  name: "ATH Construction",
-  alternateName: "ATH Construction Madagascar",
+  name: "ATH Constructions",
+  alternateName: "ATH Constructions Madagascar",
   description:
     "Entreprise familiale spécialisée dans la construction de maisons et l'ingénierie à Madagascar.",
   url: `${SITE_URL}/`,
